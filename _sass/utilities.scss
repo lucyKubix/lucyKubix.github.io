@@ -1,0 +1,25 @@
+.flex {
+  display: flex;
+  gap: 1rem
+}
+.flex.wrap {
+  flex-wrap: wrap;
+}
+.h1 {
+  @extend h1;
+}
+.h2 {
+  @extend h2;
+}
+.h3 {
+  @extend h3;
+}
+.h4 {
+  @extend h4;
+}
+.h5 {
+  @extend h5;
+}
+.h6 {
+  @extend h6;
+}

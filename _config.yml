@@ -1,3 +1,5 @@
-title: Kubix developer docs
-description:
+title: Kubix Developer Documentation
+description: Best practices, clients, and more
+show_downloads: false
+
 theme: jekyll-theme-cayman

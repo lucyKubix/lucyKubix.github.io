@@ -1,0 +1,12 @@
+nav a.active {
+  text-decoration: underline;
+}
+.site-footer {
+  ul {
+    padding-inline-start: 0;
+    list-style: none;
+  }
+  li {
+    cursor: pointer;
+  }
+  }

@@ -1,6 +1,7 @@
-- name: Home
-  link: /
-- name: About
-  link: /about.html
-- name: Blog
-  link: /blog.html
+toc:
+  - title: Developers
+    url: /developers.html
+  - title: Client Info
+    url: /client-info.html
+  - title: Client Services
+    url: /client-services.html

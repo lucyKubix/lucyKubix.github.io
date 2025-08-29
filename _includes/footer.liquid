@@ -1,0 +1,15 @@
+<ul class="flex wrap">
+  {% for item in site.data.navigation.toc %}
+    <details style="flex: 1 1 200px">
+      <summary class="h2">{{ item.title }}</summary>
+      <ul>
+        <li><a href="{{ item.url }}"><strong>View {{ item.title }}</strong></a></li>
+        {% for page in site.pages %}
+          {% if page.parent == item.url %}
+            <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </details>
+  {% endfor %}
+</ul>
