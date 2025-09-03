@@ -4,6 +4,13 @@ title: Clients
 description: Client information
 ---
 
+# Coming soon
+
+---
+this is just an idea
+
+---
+
 # Clients
 
 ## Current

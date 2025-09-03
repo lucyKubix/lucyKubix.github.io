@@ -24,5 +24,3 @@ Etiam condimentum nibh nec mauris condimentum dapibus. Nulla facilisi. Pellentes
 ## Alec
 ### Midweight Dev
 Pellentesque dignissim sagittis nunc eu suscipit. Fusce mattis nibh non arcu commodo vestibulum. In vehicula arcu eget sem pretium fringilla. Ut viverra tincidunt tincidunt. Nunc quis arcu feugiat, vulputate nisl a, accumsan turpis. Morbi pretium odio nec ligula varius, vel consectetur nisi tempor. Sed consequat nibh non commodo porta. Aenean dictum, risus nec rutrum varius, magna ante molestie orci, vestibulum malesuada nisi neque sit amet metus. Nulla bibendum lectus erat, eu dignissim nibh finibus eu. Nunc congue massa id enim bibendum eleifend. Cras mattis nisl elit, nec sodales leo rhoncus sed. Aenean nec convallis nisl, non pulvinar nisi. Donec consequat, lectus at varius volutpat, nibh arcu consequat sem, et cursus erat ante eget felis. Ut ac interdum ante.
-
-[back](./)

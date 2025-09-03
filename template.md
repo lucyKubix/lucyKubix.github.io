@@ -9,4 +9,3 @@ parent: /developers.html
 
 _yay_
 
-[back](./)
