@@ -2,7 +2,7 @@
 layout: default
 title: Template
 description: This is just another page
-parent: /developers.html
+parent:
 ---
 
 ## Welcome to another page

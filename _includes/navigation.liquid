@@ -1,5 +1,6 @@
 {% comment %}  Main navigation  {% endcomment %}
 <nav class="flex wrap">
+  <a href="/" {% if page.url == "/" %}class="active"{% endif %}>Home</a>
   {% for item in site.data.navigation.toc %}
     <a href="{{ item.url }}" {% if item.url == page.url or page.parent == item.url %}class="active"{% endif %}>{{ item.title }}</a>
   {% endfor %}
