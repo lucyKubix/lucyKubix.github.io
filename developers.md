@@ -19,12 +19,14 @@ This is your hub where you'll find helpful information. It includes things like 
 * [Liquid ***TODO***](/developers/liquid.html)
 
 ### How to {#how-to}
-* [Branch ***TODO***](/developers/branch.html)
-* [Go Live ***TODO***](/developers/go-live.html)
-* [Updates ***TODO***](/developers/updates.html)
+* [Branch](/developers/branch.html)
+* [Go Live](/developers/go-live.html)
+* [Updates](/developers/updates.html)
+* [Merge Conflict Resolution](/developers/merge-conflicts.html)
+* [Starting Work](/developers/starting-work.html)
 
 ### Tools {#tools}
-* [Editor Extensions ***TODO***](/developers/editor-extensions.html)
+* [Editor Extensions ***WIP***](/developers/editor-extensions.html)
 * [Chrome Extensions ***TODO***](/developers/chrome-extensions.html)
 * [Speed & Performance ***TODO***](/developers/speed-performance.html)
 * [SVGs ***TODO***](/developers/svgs.html)

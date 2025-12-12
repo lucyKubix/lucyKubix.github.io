@@ -4,7 +4,6 @@
  * 2. Prevent iOS text size adjust after orientation change, without disabling
  *    user zoom.
  */
-@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap");
 html {
   font-family: sans-serif; /* 1 */
   -ms-text-size-adjust: 100%; /* 2 */
@@ -661,10 +660,25 @@ th {
 body {
   padding: 0;
   margin: 0;
-  font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Nunito", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
-  color: #606c71;
+  color: #fff;
+  background-color: #28282B;
+}
+
+h1, .h1,
+h2,
+.h2,
+h3,
+.h3,
+h4,
+.h4,
+h5,
+.h5,
+h6,
+.h6 {
+  font-family: "Domine", serif;
 }
 
 #skip-to-content {
@@ -680,12 +694,12 @@ body {
   left: 10px;
   height: auto;
   width: auto;
-  background: #22c183;
-  outline: thick solid #22c183;
+  background: blue;
+  outline: thick solid blue;
 }
 
 a {
-  color: #DD3E7C;
+  color: #FFFF00;
   text-decoration: none;
 }
 a:hover {
@@ -739,28 +753,33 @@ a:hover {
 .page-header {
   color: #fff;
   text-align: center;
-  background-color: #DD3E7C;
-  background-image: radial-gradient(circle, #DD3E7C, #23262A);
+  background-color: #28282B;
+  background-image: url("/assets/images/header-background.webp");
+  background-position: 50% 100%;
+  background-repeat: repeat-x;
+  background-size: 30%;
 }
 @media screen and (min-width: 64em) {
   .page-header {
-    padding: 5rem 6rem;
+    padding: 2rem 6rem 5rem 6rem;
   }
 }
 @media screen and (min-width: 42em) and (max-width: 64em) {
   .page-header {
-    padding: 3rem 4rem;
+    padding: 1.5rem 4rem 3rem 4rem;
   }
 }
 @media screen and (max-width: 42em) {
   .page-header {
-    padding: 2rem 1rem;
+    padding: 1rem 1rem 2rem 1rem;
   }
 }
 
 .project-name {
   margin-top: 0;
   margin-bottom: 0.1rem;
+  font-family: "Domine", serif;
+  color: #FFFF00;
 }
 @media screen and (min-width: 64em) {
   .project-name {
@@ -782,6 +801,8 @@ a:hover {
   margin-bottom: 2rem;
   font-weight: normal;
   opacity: 0.7;
+  font-family: "Domine", serif;
+  color: #FFFF00;
 }
 @media screen and (min-width: 64em) {
   .project-tagline {
@@ -855,15 +876,15 @@ a:hover {
   margin-top: 2rem;
   margin-bottom: 1rem;
   font-weight: normal;
-  color: #DD3E7C;
-  font-family: "EB Garamond", serif;
+  color: #FFFF00;
+  font-family: "Domine", serif;
 }
 .main-content p {
   margin-bottom: 1em;
 }
 .main-content code {
   padding: 2px 4px;
-  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-family: "Nunito Sans", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   font-size: 0.9rem;
   color: #567482;
   background-color: #f3f6fa;
@@ -873,7 +894,7 @@ a:hover {
   padding: 0.8rem;
   margin-top: 0;
   margin-bottom: 1rem;
-  font: 1rem Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font: 1rem "Nunito Sans", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   color: #567482;
   word-wrap: normal;
   background-color: #f3f6fa;

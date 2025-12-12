@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
 
 <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Branch | Kubix Developer Documentation</title>
+<title>Starting Work | Kubix Developer Documentation</title>
 <meta name="generator" content="Jekyll v4.4.1" />
-<meta property="og:title" content="Branch" />
+<meta property="og:title" content="Starting Work" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="No trees here" />
-<meta property="og:description" content="No trees here" />
-<link rel="canonical" href="http://localhost:4000/developers/branch.html" />
-<meta property="og:url" content="http://localhost:4000/developers/branch.html" />
+<meta name="description" content="Where to begin" />
+<meta property="og:description" content="Where to begin" />
+<link rel="canonical" href="http://localhost:4000/developers/starting-work.html" />
+<meta property="og:url" content="http://localhost:4000/developers/starting-work.html" />
 <meta property="og:site_name" content="Kubix Developer Documentation" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Branch" />
+<meta property="twitter:title" content="Starting Work" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"No trees here","headline":"Branch","url":"http://localhost:4000/developers/branch.html"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"Where to begin","headline":"Starting Work","url":"http://localhost:4000/developers/starting-work.html"}</script>
 <!-- End Jekyll SEO tag -->
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -43,8 +43,8 @@
     <a id="skip-to-content" href="#content">Skip to the content.</a>
 
     <header class="page-header" role="banner">
-      <h1 class="project-name">Branch</h1>
-      <h2 class="project-tagline">No trees here</h2>
+      <h1 class="project-name">Starting Work</h1>
+      <h2 class="project-tagline">Where to begin</h2>
     </header>
 
     <main id="content" class="main-content" role="main">
@@ -59,25 +59,16 @@
     <a href="/client-services.html" >Client Services</a>
   
 </nav>
-      <h2 id="branch">Branch</h2>
+      <h2 id="how-to-start-working">How to start working</h2>
 
-<p>All branches have a specific naming convention - ‘CU-’ followed by the ClickUp ID, then the developers name and then a very brief summary of the task.
-For example ‘CU-8698zh3cc_Mell-Russon-swatch-fix’.</p>
+<p>We use the Shopify CLI to work on our tasks, which creates a private local theme that no one can see without the link which is very helpful for working on tasks as it allows freedom to work without having to worry about theme changes or it being seen before it’s ready for review.</p>
 
-<p>The best way to keep this consistent is to use the Github extension in ClickUp, as this generates the branch name for you, without the summary, and allows the branch to be linked to the task so if another developer has to pick up the work then they have the branch name available at a quick glance.</p>
+<p>All existing Github repositories should have a file in them called  shopify.theme.toml .This file contains a config that will look something like this:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[environments.dev]
+store = “store-name”
+</code></pre></div></div>
 
-<p>Always make sure that you select the correct repository and branch from main unless specified otherwise which should only be in very rare cases.</p>
-
-<p>Keep branch summaries short and functional — focus on the action (e.g., header-fix, cart-bug, product-layout).</p>
-
-<p>Never branch from another developer’s feature branch unless explicitly instructed.</p>
-
-<p>Step by step screenshots:
-<img src="/assets/images/github-1.png" alt="Step 1 screenshot of how to create a branch in clickup" />
-<img src="/assets/images/github-2.png" alt="Step 2 screenshot of naming the branch" />
-<img src="/assets/images/github-3.png" alt="Step 3 screenshot of choosing which branch to branch from" />
-<img src="/assets/images/github-4.png" alt="Step 4 screenshot showing the branch is now connected to the ticket" /></p>
-
+<p>This is what will allow you to connect to the store when you run the command shopify theme dev -e dev in the terminal. This command will provide you with the links you need to access your theme and all code changes will now be pushed to this theme on file save as long as the terminal continues running this command.</p>
 
       
       <a href="/developers.html">Back</a>

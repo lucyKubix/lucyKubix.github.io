@@ -7,7 +7,7 @@ parent: /developers.html
 
 ## Lucy
 ### Development Lead
-Donec finibus nibh non nibh posuere, ut placerat diam auctor. Nulla facilisi. Nulla facilisi. Quisque arcu purus, ullamcorper vitae auctor a, fermentum ac eros. Duis imperdiet ligula lacus. In eget erat ut nibh dapibus iaculis at ac justo. Fusce facilisis risus sem. Morbi rutrum quis orci non vestibulum. Proin quis nisl interdum, pretium quam at, mattis augue. Mauris ullamcorper tortor a lacus porta interdum. Aenean sagittis eget dolor in tincidunt. Morbi a convallis eros, vel tincidunt nibh.
+Hi, I'm Lucy, a passionate, results-driven professional with a strong background in Shopify development, currently working as Development Lead. I thrive on building effective relationships, solving complex challenges, and driving positive outcomes both independently and collaboratively. Outside of work, I’m a keen netball player - I love the energy, teamwork, and strategy the game brings. When I’m not on the court, I’m usually spending time with my miniature dachshund, Fudge, who ensures there’s never a dull moment at home!
 
 ## Nate
 ### Senior Dev
@@ -15,7 +15,8 @@ Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos
 
 ## Tom
 ### Midweight Dev
-Pellentesque nunc nisl, lobortis sed ultricies ultrices, pharetra sollicitudin magna. Nunc auctor nisi eu nisi faucibus tempus. Sed sodales neque orci, in ullamcorper nulla vehicula eget. Donec rhoncus convallis imperdiet. In interdum commodo est pellentesque ullamcorper. Suspendisse dapibus condimentum arcu eu feugiat. In condimentum vestibulum augue, commodo euismod lectus facilisis et. Sed hendrerit sit amet elit at pulvinar.
+Hi, I'm Tom, a dedicated front-end developer who thrives on solving problems efficiently and delivering measurable results. I take pride in bringing a clear, goal-driven approach to every project, whether I’m refining a storefront, improving performance, or supporting ongoing client needs. I enjoy collaborating with teams just as much as tackling challenges independently, always focused on creating smooth, reliable outcomes.
+Outside of work, you'll usually find me in the gym pushing for that next bit of progress, or at home with my cats, Jane and Leon - with Leon constantly keeping me busy as I try to shut him up and stop him from breaking things.
 
 ## Mell
 ### Midweight Dev
