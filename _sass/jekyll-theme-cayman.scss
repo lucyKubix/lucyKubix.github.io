@@ -1,6 +1,7 @@
-@import "normalize";
-@import "rouge-github";
-@import "variables";
+@use "sass:color";
+@use "normalize" as *;
+@use "rouge-github" as *;
+@use "variables" as *;
 
 @mixin large {
   @media screen and (min-width: #{$large-breakpoint}) {

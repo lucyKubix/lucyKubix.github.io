@@ -1,7 +1,7 @@
 ---
 ---
 
-@import 'jekyll-theme-cayman';
-@import 'utilities';
-@import 'navigation';
+@use 'jekyll-theme-cayman' as *;
+@use 'utilities' as *;
+@use 'navigation' as *;
 
