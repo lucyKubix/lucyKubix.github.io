@@ -61,6 +61,632 @@
 </nav>
       <h2 id="custom-elements">Custom Elements</h2>
 
+<p>Custom Elements are a web standard that allows you to create your own HTML elements with custom behavior. They’re part of the Web Components specification and provide a way to build reusable, encapsulated components for Shopify themes.</p>
+
+<h3 id="what-are-custom-elements">What are Custom Elements?</h3>
+
+<p>Custom Elements let you define new HTML tags that have their own JavaScript behavior. They’re perfect for creating reusable components in Shopify themes, such as product cards, cart drawers, quantity selectors, and more.</p>
+
+<h3 id="basic-syntax">Basic Syntax</h3>
+
+<p>Custom Elements must:</p>
+<ul>
+  <li>Have a name with at least one hyphen (e.g., <code class="language-plaintext highlighter-rouge">product-card</code>, <code class="language-plaintext highlighter-rouge">cart-drawer</code>)</li>
+  <li>Extend the <code class="language-plaintext highlighter-rouge">HTMLElement</code> class</li>
+  <li>Be registered with <code class="language-plaintext highlighter-rouge">customElements.define()</code></li>
+</ul>
+
+<h3 id="basic-example">Basic Example</h3>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">ProductCard</span> <span class="kd">extends</span> <span class="nc">HTMLElement</span> <span class="p">{</span>
+  <span class="nf">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">();</span>
+    <span class="c1">// Initialize your element</span>
+  <span class="p">}</span>
+
+  <span class="nf">connectedCallback</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Called when element is added to the DOM</span>
+    <span class="k">this</span><span class="p">.</span><span class="nf">render</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="nf">disconnectedCallback</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Called when element is removed from the DOM</span>
+    <span class="c1">// Clean up event listeners, timers, etc.</span>
+  <span class="p">}</span>
+
+  <span class="nf">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">`
+      &lt;div class="product-card"&gt;
+        &lt;img src="</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nf">getAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">image</span><span class="dl">'</span><span class="p">)}</span><span class="s2">" alt="</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nf">getAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">title</span><span class="dl">'</span><span class="p">)}</span><span class="s2">"&gt;
+        &lt;h3&gt;</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nf">getAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">title</span><span class="dl">'</span><span class="p">)}</span><span class="s2">&lt;/h3&gt;
+        &lt;p class="price"&gt;</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nf">getAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">price</span><span class="dl">'</span><span class="p">)}</span><span class="s2">&lt;/p&gt;
+      &lt;/div&gt;
+    `</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Register the custom element</span>
+<span class="nx">customElements</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="dl">'</span><span class="s1">product-card</span><span class="dl">'</span><span class="p">,</span> <span class="nx">ProductCard</span><span class="p">);</span>
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;product-card</span>
+  <span class="na">image=</span><span class="s">"/products/t-shirt.jpg"</span>
+  <span class="na">title=</span><span class="s">"Cool T-Shirt"</span>
+  <span class="na">price=</span><span class="s">"$29.99"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/product-card&gt;</span>
+</code></pre></div></div>
+
+<h3 id="lifecycle-methods">Lifecycle Methods</h3>
+
+<p>Custom Elements have several lifecycle callbacks:</p>
+
+<ol>
+  <li><strong><code class="language-plaintext highlighter-rouge">constructor()</code></strong>: Called when the element is created</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">connectedCallback()</code></strong>: Called when element is inserted into the DOM</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">disconnectedCallback()</code></strong>: Called when element is removed from the DOM</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">attributeChangedCallback(name, oldValue, newValue)</code></strong>: Called when observed attributes change</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">adoptedCallback()</code></strong>: Called when element is moved to a new document</li>
+</ol>
+
+<h3 id="observing-attributes">Observing Attributes</h3>
+
+<p>To react to attribute changes, you need to:</p>
+<ol>
+  <li>Define which attributes to observe</li>
+  <li>Implement <code class="language-plaintext highlighter-rouge">attributeChangedCallback</code></li>
+</ol>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">ProductCard</span> <span class="kd">extends</span> <span class="nc">HTMLElement</span> <span class="p">{</span>
+  <span class="kd">static</span> <span class="kd">get</span> <span class="nf">observedAttributes</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="dl">'</span><span class="s1">price</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">sale-price</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">on-sale</span><span class="dl">'</span><span class="p">];</span>
+  <span class="p">}</span>
+
+  <span class="nf">attributeChangedCallback</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">,</span> <span class="nx">newValue</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if </span><span class="p">(</span><span class="nx">oldValue</span> <span class="o">!==</span> <span class="nx">newValue</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nf">updatePrice</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nf">updatePrice</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">priceEl</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.price</span><span class="dl">'</span><span class="p">);</span>
+    <span class="k">if </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nf">hasAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">on-sale</span><span class="dl">'</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nx">priceEl</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">`
+        &lt;span class="price--sale"&gt;</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nf">getAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">sale-price</span><span class="dl">'</span><span class="p">)}</span><span class="s2">&lt;/span&gt;
+        &lt;span class="price--original"&gt;</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nf">getAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">price</span><span class="dl">'</span><span class="p">)}</span><span class="s2">&lt;/span&gt;
+      `</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">priceEl</span><span class="p">.</span><span class="nx">textContent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">getAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">price</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="shopify-specific-examples">Shopify-Specific Examples</h3>
+
+<h4 id="product-card-component">Product Card Component</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">ShopifyProductCard</span> <span class="kd">extends</span> <span class="nc">HTMLElement</span> <span class="p">{</span>
+  <span class="nf">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">productHandle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">getAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">handle</span><span class="dl">'</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nf">connectedCallback</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nf">fetchProduct</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="k">async</span> <span class="nf">fetchProduct</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nf">fetch</span><span class="p">(</span><span class="s2">`/products/</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">productHandle</span><span class="p">}</span><span class="s2">.js`</span><span class="p">);</span>
+      <span class="kd">const</span> <span class="nx">product</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">response</span><span class="p">.</span><span class="nf">json</span><span class="p">();</span>
+      <span class="k">this</span><span class="p">.</span><span class="nf">render</span><span class="p">(</span><span class="nx">product</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nf">error</span><span class="p">(</span><span class="dl">'</span><span class="s1">Error fetching product:</span><span class="dl">'</span><span class="p">,</span> <span class="nx">error</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nf">render</span><span class="p">(</span><span class="nx">product</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">variant</span> <span class="o">=</span> <span class="nx">product</span><span class="p">.</span><span class="nx">variants</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">`
+      &lt;a href="/products/</span><span class="p">${</span><span class="nx">product</span><span class="p">.</span><span class="nx">handle</span><span class="p">}</span><span class="s2">" class="product-card"&gt;
+        &lt;div class="product-card__image"&gt;
+          &lt;img src="</span><span class="p">${</span><span class="nx">product</span><span class="p">.</span><span class="nx">featured_image</span><span class="p">}</span><span class="s2">" alt="</span><span class="p">${</span><span class="nx">product</span><span class="p">.</span><span class="nx">title</span><span class="p">}</span><span class="s2">" loading="lazy"&gt;
+          </span><span class="p">${</span><span class="nx">product</span><span class="p">.</span><span class="nx">compare_at_price</span> <span class="o">&gt;</span> <span class="nx">product</span><span class="p">.</span><span class="nx">price</span> <span class="p">?</span> <span class="dl">'</span><span class="s1">&lt;span class="badge badge--sale"&gt;Sale&lt;/span&gt;</span><span class="dl">'</span> <span class="p">:</span> <span class="dl">''</span><span class="p">}</span><span class="s2">
+        &lt;/div&gt;
+        &lt;div class="product-card__content"&gt;
+          &lt;h3 class="product-card__title"&gt;</span><span class="p">${</span><span class="nx">product</span><span class="p">.</span><span class="nx">title</span><span class="p">}</span><span class="s2">&lt;/h3&gt;
+          &lt;div class="product-card__price"&gt;
+            </span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nf">formatPrice</span><span class="p">(</span><span class="nx">variant</span><span class="p">.</span><span class="nx">price</span><span class="p">)}</span><span class="s2">
+            </span><span class="p">${</span><span class="nx">variant</span><span class="p">.</span><span class="nx">compare_at_price</span> <span class="p">?</span> <span class="s2">`&lt;span class="price--compare"&gt;</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nf">formatPrice</span><span class="p">(</span><span class="nx">variant</span><span class="p">.</span><span class="nx">compare_at_price</span><span class="p">)}</span><span class="s2">&lt;/span&gt;`</span> <span class="p">:</span> <span class="dl">''</span><span class="p">}</span><span class="s2">
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/a&gt;
+    `</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nf">formatPrice</span><span class="p">(</span><span class="nx">price</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nc">NumberFormat</span><span class="p">(</span><span class="dl">'</span><span class="s1">en-US</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+      <span class="na">style</span><span class="p">:</span> <span class="dl">'</span><span class="s1">currency</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">currency</span><span class="p">:</span> <span class="dl">'</span><span class="s1">USD</span><span class="dl">'</span>
+    <span class="p">}).</span><span class="nf">format</span><span class="p">(</span><span class="nx">price</span> <span class="o">/</span> <span class="mi">100</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">customElements</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="dl">'</span><span class="s1">shopify-product-card</span><span class="dl">'</span><span class="p">,</span> <span class="nx">ShopifyProductCard</span><span class="p">);</span>
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;shopify-product-card</span> <span class="na">handle=</span><span class="s">"cool-t-shirt"</span><span class="nt">&gt;&lt;/shopify-product-card&gt;</span>
+</code></pre></div></div>
+
+<h4 id="quantity-selector">Quantity Selector</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">QuantitySelector</span> <span class="kd">extends</span> <span class="nc">HTMLElement</span> <span class="p">{</span>
+  <span class="nf">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">quantity</span> <span class="o">=</span> <span class="nf">parseInt</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nf">getAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">value</span><span class="dl">'</span><span class="p">)</span> <span class="o">||</span> <span class="dl">'</span><span class="s1">1</span><span class="dl">'</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">min</span> <span class="o">=</span> <span class="nf">parseInt</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nf">getAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">min</span><span class="dl">'</span><span class="p">)</span> <span class="o">||</span> <span class="dl">'</span><span class="s1">1</span><span class="dl">'</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">max</span> <span class="o">=</span> <span class="nf">parseInt</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nf">getAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">max</span><span class="dl">'</span><span class="p">)</span> <span class="o">||</span> <span class="dl">'</span><span class="s1">999</span><span class="dl">'</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nf">connectedCallback</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nf">render</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nf">attachEventListeners</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="nf">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">`
+      &lt;button class="quantity-selector__button" data-action="decrease" aria-label="Decrease quantity"&gt;−&lt;/button&gt;
+      &lt;input
+        type="number"
+        class="quantity-selector__input"
+        value="</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">quantity</span><span class="p">}</span><span class="s2">"
+        min="</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">min</span><span class="p">}</span><span class="s2">"
+        max="</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">max</span><span class="p">}</span><span class="s2">"
+        aria-label="Quantity"
+      &gt;
+      &lt;button class="quantity-selector__button" data-action="increase" aria-label="Increase quantity"&gt;+&lt;/button&gt;
+    `</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nf">attachEventListeners</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">input</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.quantity-selector__input</span><span class="dl">'</span><span class="p">);</span>
+    <span class="kd">const</span> <span class="nx">buttons</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">querySelectorAll</span><span class="p">(</span><span class="dl">'</span><span class="s1">[data-action]</span><span class="dl">'</span><span class="p">);</span>
+
+    <span class="nx">buttons</span><span class="p">.</span><span class="nf">forEach</span><span class="p">(</span><span class="nx">button</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">button</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">click</span><span class="dl">'</span><span class="p">,</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">action</span><span class="p">;</span>
+        <span class="k">if </span><span class="p">(</span><span class="nx">action</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">increase</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">quantity</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">max</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">quantity</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if </span><span class="p">(</span><span class="nx">action</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">decrease</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">quantity</span> <span class="o">&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">min</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">quantity</span><span class="o">--</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nx">input</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">quantity</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nf">dispatchChangeEvent</span><span class="p">();</span>
+      <span class="p">});</span>
+    <span class="p">});</span>
+
+    <span class="nx">input</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">change</span><span class="dl">'</span><span class="p">,</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">value</span> <span class="o">=</span> <span class="nf">parseInt</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">min</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">quantity</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nf">max</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">min</span><span class="p">,</span> <span class="nb">Math</span><span class="p">.</span><span class="nf">min</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">max</span><span class="p">,</span> <span class="nx">value</span><span class="p">));</span>
+      <span class="nx">input</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">quantity</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nf">dispatchChangeEvent</span><span class="p">();</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="nf">dispatchChangeEvent</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nf">dispatchEvent</span><span class="p">(</span><span class="k">new</span> <span class="nc">CustomEvent</span><span class="p">(</span><span class="dl">'</span><span class="s1">quantity-change</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+      <span class="na">detail</span><span class="p">:</span> <span class="p">{</span> <span class="na">quantity</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">quantity</span> <span class="p">},</span>
+      <span class="na">bubbles</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="p">}));</span>
+  <span class="p">}</span>
+
+  <span class="kd">static</span> <span class="kd">get</span> <span class="nf">observedAttributes</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="dl">'</span><span class="s1">value</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">min</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">max</span><span class="dl">'</span><span class="p">];</span>
+  <span class="p">}</span>
+
+  <span class="nf">attributeChangedCallback</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">,</span> <span class="nx">newValue</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if </span><span class="p">(</span><span class="nx">oldValue</span> <span class="o">!==</span> <span class="nx">newValue</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.quantity-selector__input</span><span class="dl">'</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">quantity</span> <span class="o">=</span> <span class="nf">parseInt</span><span class="p">(</span><span class="nx">newValue</span><span class="p">)</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">min</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.quantity-selector__input</span><span class="dl">'</span><span class="p">).</span><span class="nx">value</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">quantity</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">customElements</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="dl">'</span><span class="s1">quantity-selector</span><span class="dl">'</span><span class="p">,</span> <span class="nx">QuantitySelector</span><span class="p">);</span>
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;quantity-selector</span> <span class="na">value=</span><span class="s">"1"</span> <span class="na">min=</span><span class="s">"1"</span> <span class="na">max=</span><span class="s">"10"</span><span class="nt">&gt;&lt;/quantity-selector&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">quantity-selector</span><span class="dl">'</span><span class="p">).</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">quantity-change</span><span class="dl">'</span><span class="p">,</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">New quantity:</span><span class="dl">'</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">detail</span><span class="p">.</span><span class="nx">quantity</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<h4 id="add-to-cart-button">Add to Cart Button</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">AddToCartButton</span> <span class="kd">extends</span> <span class="nc">HTMLElement</span> <span class="p">{</span>
+  <span class="nf">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">variantId</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">getAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">variant-id</span><span class="dl">'</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">loading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nf">connectedCallback</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nf">render</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nf">attachEventListeners</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="nf">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">`
+      &lt;button class="add-to-cart-button" </span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">loading</span> <span class="p">?</span> <span class="dl">'</span><span class="s1">disabled</span><span class="dl">'</span> <span class="p">:</span> <span class="dl">''</span><span class="p">}</span><span class="s2">&gt;
+        &lt;span class="add-to-cart-button__text"&gt;</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">loading</span> <span class="p">?</span> <span class="dl">'</span><span class="s1">Adding...</span><span class="dl">'</span> <span class="p">:</span> <span class="dl">'</span><span class="s1">Add to Cart</span><span class="dl">'</span><span class="p">}</span><span class="s2">&lt;/span&gt;
+      &lt;/button&gt;
+    `</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">async</span> <span class="nf">attachEventListeners</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">button</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.add-to-cart-button</span><span class="dl">'</span><span class="p">);</span>
+
+    <span class="nx">button</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">click</span><span class="dl">'</span><span class="p">,</span> <span class="k">async </span><span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="k">if </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">loading</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">loading</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nf">render</span><span class="p">();</span>
+
+      <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nf">fetch</span><span class="p">(</span><span class="dl">'</span><span class="s1">/cart/add.js</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+          <span class="na">method</span><span class="p">:</span> <span class="dl">'</span><span class="s1">POST</span><span class="dl">'</span><span class="p">,</span>
+          <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
+            <span class="dl">'</span><span class="s1">Content-Type</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">application/json</span><span class="dl">'</span><span class="p">,</span>
+          <span class="p">},</span>
+          <span class="na">body</span><span class="p">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nf">stringify</span><span class="p">({</span>
+            <span class="na">items</span><span class="p">:</span> <span class="p">[{</span>
+              <span class="na">id</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">variantId</span><span class="p">,</span>
+              <span class="na">quantity</span><span class="p">:</span> <span class="mi">1</span>
+            <span class="p">}]</span>
+          <span class="p">})</span>
+        <span class="p">});</span>
+
+        <span class="k">if </span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">ok</span><span class="p">)</span> <span class="p">{</span>
+          <span class="kd">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">response</span><span class="p">.</span><span class="nf">json</span><span class="p">();</span>
+          <span class="k">this</span><span class="p">.</span><span class="nf">dispatchEvent</span><span class="p">(</span><span class="k">new</span> <span class="nc">CustomEvent</span><span class="p">(</span><span class="dl">'</span><span class="s1">cart-added</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">detail</span><span class="p">:</span> <span class="nx">data</span><span class="p">,</span>
+            <span class="na">bubbles</span><span class="p">:</span> <span class="kc">true</span>
+          <span class="p">}));</span>
+
+          <span class="c1">// Update cart count if cart-count element exists</span>
+          <span class="kd">const</span> <span class="nx">cartCount</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">cart-count</span><span class="dl">'</span><span class="p">);</span>
+          <span class="k">if </span><span class="p">(</span><span class="nx">cartCount</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">cartCount</span><span class="p">.</span><span class="nf">updateCount</span><span class="p">();</span>
+          <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="k">throw</span> <span class="k">new</span> <span class="nc">Error</span><span class="p">(</span><span class="dl">'</span><span class="s1">Failed to add to cart</span><span class="dl">'</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">}</span> <span class="k">catch </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">error</span><span class="p">(</span><span class="dl">'</span><span class="s1">Error adding to cart:</span><span class="dl">'</span><span class="p">,</span> <span class="nx">error</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nf">showError</span><span class="p">();</span>
+      <span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">loading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nf">render</span><span class="p">();</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="nf">showError</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">button</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.add-to-cart-button</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">button</span><span class="p">.</span><span class="nx">textContent</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">Error - Try Again</span><span class="dl">'</span><span class="p">;</span>
+    <span class="nx">button</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="dl">'</span><span class="s1">add-to-cart-button--error</span><span class="dl">'</span><span class="p">);</span>
+
+    <span class="nf">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">button</span><span class="p">.</span><span class="nx">textContent</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">Add to Cart</span><span class="dl">'</span><span class="p">;</span>
+      <span class="nx">button</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nf">remove</span><span class="p">(</span><span class="dl">'</span><span class="s1">add-to-cart-button--error</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">},</span> <span class="mi">3000</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="kd">static</span> <span class="kd">get</span> <span class="nf">observedAttributes</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="dl">'</span><span class="s1">variant-id</span><span class="dl">'</span><span class="p">];</span>
+  <span class="p">}</span>
+
+  <span class="nf">attributeChangedCallback</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">,</span> <span class="nx">newValue</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if </span><span class="p">(</span><span class="nx">name</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">variant-id</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">oldValue</span> <span class="o">!==</span> <span class="nx">newValue</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">variantId</span> <span class="o">=</span> <span class="nx">newValue</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">customElements</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="dl">'</span><span class="s1">add-to-cart-button</span><span class="dl">'</span><span class="p">,</span> <span class="nx">AddToCartButton</span><span class="p">);</span>
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;add-to-cart-button</span> <span class="na">variant-id=</span><span class="s">"123456789"</span><span class="nt">&gt;&lt;/add-to-cart-button&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">add-to-cart-button</span><span class="dl">'</span><span class="p">).</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">cart-added</span><span class="dl">'</span><span class="p">,</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// Show success message, open cart drawer, etc.</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Item added:</span><span class="dl">'</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">detail</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<h4 id="cart-count-badge">Cart Count Badge</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">CartCount</span> <span class="kd">extends</span> <span class="nc">HTMLElement</span> <span class="p">{</span>
+  <span class="nf">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nf">connectedCallback</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nf">updateCount</span><span class="p">();</span>
+    <span class="c1">// Listen for cart updates from other components</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">cart-added</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nf">updateCount</span><span class="p">());</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">cart-updated</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nf">updateCount</span><span class="p">());</span>
+  <span class="p">}</span>
+
+  <span class="k">async</span> <span class="nf">updateCount</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nf">fetch</span><span class="p">(</span><span class="dl">'</span><span class="s1">/cart.js</span><span class="dl">'</span><span class="p">);</span>
+      <span class="kd">const</span> <span class="nx">cart</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">response</span><span class="p">.</span><span class="nf">json</span><span class="p">();</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">count</span> <span class="o">=</span> <span class="nx">cart</span><span class="p">.</span><span class="nx">item_count</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nf">render</span><span class="p">();</span>
+    <span class="p">}</span> <span class="k">catch </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nf">error</span><span class="p">(</span><span class="dl">'</span><span class="s1">Error fetching cart:</span><span class="dl">'</span><span class="p">,</span> <span class="nx">error</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nf">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">`
+      &lt;span class="cart-count" aria-label="</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">count</span><span class="p">}</span><span class="s2"> items in cart"&gt;
+        </span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">count</span><span class="p">}</span><span class="s2">
+      &lt;/span&gt;
+    `</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">customElements</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="dl">'</span><span class="s1">cart-count</span><span class="dl">'</span><span class="p">,</span> <span class="nx">CartCount</span><span class="p">);</span>
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"/cart"</span> <span class="na">class=</span><span class="s">"cart-link"</span><span class="nt">&gt;</span>
+  Cart
+  <span class="nt">&lt;cart-count&gt;&lt;/cart-count&gt;</span>
+<span class="nt">&lt;/a&gt;</span>
+</code></pre></div></div>
+
+<h3 id="best-practices">Best Practices</h3>
+
+<ol>
+  <li><strong>Use descriptive names with hyphens</strong>
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ✅ Good</span>
+<span class="nx">customElements</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="dl">'</span><span class="s1">product-card</span><span class="dl">'</span><span class="p">,</span> <span class="nx">ProductCard</span><span class="p">);</span>
+<span class="nx">customElements</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="dl">'</span><span class="s1">cart-drawer</span><span class="dl">'</span><span class="p">,</span> <span class="nx">CartDrawer</span><span class="p">);</span>
+
+<span class="c1">// ❌ Bad (no hyphen)</span>
+<span class="nx">customElements</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="dl">'</span><span class="s1">productcard</span><span class="dl">'</span><span class="p">,</span> <span class="nx">ProductCard</span><span class="p">);</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Clean up in disconnectedCallback</strong>
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">connectedCallback</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">.</span><span class="nf">bind</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">click</span><span class="dl">'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nf">disconnectedCallback</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nf">removeEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">click</span><span class="dl">'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Use data attributes for configuration</strong>
+    <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- ✅ Good --&gt;</span>
+<span class="nt">&lt;product-card</span> <span class="na">data-handle=</span><span class="s">"cool-t-shirt"</span><span class="nt">&gt;&lt;/product-card&gt;</span>
+
+<span class="c">&lt;!-- ❌ Less flexible --&gt;</span>
+<span class="nt">&lt;product-card</span> <span class="na">handle=</span><span class="s">"cool-t-shirt"</span><span class="nt">&gt;&lt;/product-card&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Handle loading states</strong>
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">render</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">loading</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">&lt;div class="loading"&gt;Loading...&lt;/div&gt;</span><span class="dl">'</span><span class="p">;</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="c1">// Render actual content</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Dispatch custom events for communication</strong>
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">this</span><span class="p">.</span><span class="nf">dispatchEvent</span><span class="p">(</span><span class="k">new</span> <span class="nc">CustomEvent</span><span class="p">(</span><span class="dl">'</span><span class="s1">product-loaded</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">detail</span><span class="p">:</span> <span class="p">{</span> <span class="na">product</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">product</span> <span class="p">},</span>
+  <span class="na">bubbles</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="na">cancelable</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}));</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Validate required attributes</strong>
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">connectedCallback</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if </span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nf">hasAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">variant-id</span><span class="dl">'</span><span class="p">))</span> <span class="p">{</span>
+   <span class="nx">console</span><span class="p">.</span><span class="nf">error</span><span class="p">(</span><span class="dl">'</span><span class="s1">variant-id is required</span><span class="dl">'</span><span class="p">);</span>
+   <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="c1">// Continue initialization</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Use private methods for internal logic</strong>
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">ProductCard</span> <span class="kd">extends</span> <span class="nc">HTMLElement</span> <span class="p">{</span>
+  <span class="nf">#formatPrice</span><span class="p">(</span><span class="nx">price</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Private method</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nc">NumberFormat</span><span class="p">(</span><span class="dl">'</span><span class="s1">en-US</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+      <span class="na">style</span><span class="p">:</span> <span class="dl">'</span><span class="s1">currency</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">currency</span><span class="p">:</span> <span class="dl">'</span><span class="s1">USD</span><span class="dl">'</span>
+    <span class="p">}).</span><span class="nf">format</span><span class="p">(</span><span class="nx">price</span> <span class="o">/</span> <span class="mi">100</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="shopify-specific-considerations">Shopify-Specific Considerations</h3>
+
+<ol>
+  <li><strong>Theme Editor Compatibility</strong>
+    <ul>
+      <li>Custom elements work well with Shopify’s theme editor</li>
+      <li>Use data attributes that can be set via section settings
+```liquid</li>
+    </ul>
+    <product-card data-handle=""></product-card>
+    <p>```</p>
+  </li>
+  <li><strong>Lazy Loading</strong>
+    <ul>
+      <li>Use <code class="language-plaintext highlighter-rouge">loading="lazy"</code> for images</li>
+      <li>Consider lazy-loading entire components with Intersection Observer
+        <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">connectedCallback</span><span class="p">()</span> <span class="p">{</span>
+<span class="k">if </span><span class="p">(</span><span class="dl">'</span><span class="s1">IntersectionObserver</span><span class="dl">'</span> <span class="k">in</span> <span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">observer</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">IntersectionObserver</span><span class="p">((</span><span class="nx">entries</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">entries</span><span class="p">.</span><span class="nf">forEach</span><span class="p">(</span><span class="nx">entry</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="k">if </span><span class="p">(</span><span class="nx">entry</span><span class="p">.</span><span class="nx">isIntersecting</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nf">loadContent</span><span class="p">();</span>
+        <span class="nx">observer</span><span class="p">.</span><span class="nf">unobserve</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+  <span class="nx">observer</span><span class="p">.</span><span class="nf">observe</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nf">loadContent</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Cart API Integration</strong>
+    <ul>
+      <li>Always handle errors when using <code class="language-plaintext highlighter-rouge">/cart/add.js</code> and <code class="language-plaintext highlighter-rouge">/cart.js</code></li>
+      <li>Update cart UI components when cart changes</li>
+      <li>Consider rate limiting for rapid cart updates</li>
+    </ul>
+  </li>
+  <li><strong>Performance</strong>
+    <ul>
+      <li>Register custom elements early in your theme</li>
+      <li>Consider code splitting for large components</li>
+      <li>Use <code class="language-plaintext highlighter-rouge">requestIdleCallback</code> for non-critical initialization</li>
+    </ul>
+  </li>
+  <li><strong>Accessibility</strong>
+    <ul>
+      <li>Always include proper ARIA labels</li>
+      <li>Ensure keyboard navigation works</li>
+      <li>Test with screen readers</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="common-patterns">Common Patterns</h3>
+
+<h4 id="component-with-slots">Component with Slots</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">ProductCard</span> <span class="kd">extends</span> <span class="nc">HTMLElement</span> <span class="p">{</span>
+  <span class="nf">connectedCallback</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">`
+      &lt;div class="product-card"&gt;
+        &lt;slot name="image"&gt;&lt;/slot&gt;
+        &lt;div class="product-card__content"&gt;
+          &lt;slot name="title"&gt;&lt;/slot&gt;
+          &lt;slot name="price"&gt;&lt;/slot&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    `</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">customElements</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="dl">'</span><span class="s1">product-card</span><span class="dl">'</span><span class="p">,</span> <span class="nx">ProductCard</span><span class="p">);</span>
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;product-card&gt;</span>
+  <span class="nt">&lt;img</span> <span class="na">slot=</span><span class="s">"image"</span> <span class="na">src=</span><span class="s">"/product.jpg"</span> <span class="na">alt=</span><span class="s">"Product"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;h3</span> <span class="na">slot=</span><span class="s">"title"</span><span class="nt">&gt;</span>Product Name<span class="nt">&lt;/h3&gt;</span>
+  <span class="nt">&lt;span</span> <span class="na">slot=</span><span class="s">"price"</span><span class="nt">&gt;</span>$29.99<span class="nt">&lt;/span&gt;</span>
+<span class="nt">&lt;/product-card&gt;</span>
+</code></pre></div></div>
+
+<h4 id="component-with-template">Component with Template</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">ProductCard</span> <span class="kd">extends</span> <span class="nc">HTMLElement</span> <span class="p">{</span>
+  <span class="nf">connectedCallback</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">product-card-template</span><span class="dl">'</span><span class="p">);</span>
+    <span class="kd">const</span> <span class="nx">content</span> <span class="o">=</span> <span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nf">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+
+    <span class="c1">// Populate template with data</span>
+    <span class="nx">content</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.product-title</span><span class="dl">'</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">getAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">title</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">content</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.product-price</span><span class="dl">'</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">getAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">price</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">content</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.product-image</span><span class="dl">'</span><span class="p">).</span><span class="nx">src</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">getAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">image</span><span class="dl">'</span><span class="p">);</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nf">appendChild</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;template</span> <span class="na">id=</span><span class="s">"product-card-template"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"product-card"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;img</span> <span class="na">class=</span><span class="s">"product-image"</span> <span class="na">src=</span><span class="s">""</span> <span class="na">alt=</span><span class="s">""</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;h3</span> <span class="na">class=</span><span class="s">"product-title"</span><span class="nt">&gt;&lt;/h3&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">class=</span><span class="s">"product-price"</span><span class="nt">&gt;&lt;/p&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/template&gt;</span>
+</code></pre></div></div>
+
+<h3 id="browser-support">Browser Support</h3>
+
+<p>Custom Elements are supported in all modern browsers:</p>
+<ul>
+  <li>Chrome 67+</li>
+  <li>Firefox 63+</li>
+  <li>Safari 10.1+</li>
+  <li>Edge 79+</li>
+</ul>
+
+<p>For older browsers, use a polyfill:</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://unpkg.com/@webcomponents/custom-elements@1.5.0/custom-elements.min.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<h3 id="when-to-use-custom-elements">When to Use Custom Elements</h3>
+
+<p>✅ <strong>Use Custom Elements when:</strong></p>
+<ul>
+  <li>Building reusable components across multiple pages</li>
+  <li>Creating interactive elements (cart, product selectors, etc.)</li>
+  <li>You want encapsulated, self-contained functionality</li>
+  <li>Working with dynamic content from Shopify APIs</li>
+</ul>
+
+<p>❌ <strong>Consider alternatives when:</strong></p>
+<ul>
+  <li>Simple static content (use Liquid templates)</li>
+  <li>Very simple interactions (vanilla JS might be simpler)</li>
+  <li>You need to support very old browsers without polyfills</li>
+</ul>
+
+<h3 id="tips">Tips</h3>
+
+<ul>
+  <li><strong>Start simple</strong>: Begin with basic functionality and add features incrementally</li>
+  <li><strong>Test thoroughly</strong>: Custom elements can have timing issues with DOM manipulation</li>
+  <li><strong>Document your components</strong>: Create a component library or style guide</li>
+  <li><strong>Keep components focused</strong>: One component, one responsibility</li>
+</ul>
+
+<h3 id="resources">Resources</h3>
+
+<ul>
+  <li><a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements" target="_blank" rel="noopener noreferrer">MDN: Using Custom Elements</a></li>
+  <li><a href="https://web.dev/custom-elements-v1/" target="_blank" rel="noopener noreferrer">Web.dev: Custom Elements v1</a></li>
+  <li><a href="https://shopify.dev/docs/api/ajax" target="_blank" rel="noopener noreferrer">Shopify Ajax API</a></li>
+  <li><a href="https://shopify.dev/docs/themes/architecture/sections" target="_blank" rel="noopener noreferrer">Shopify Theme Sections</a></li>
+</ul>
+
       
       <a href="/developers.html">Back</a>
       

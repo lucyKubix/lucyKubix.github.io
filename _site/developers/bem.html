@@ -61,6 +61,192 @@
 </nav>
       <h2 id="bem">BEM</h2>
 
+<p>BEM (Block Element Modifier) is a CSS naming methodology that helps create reusable components and avoid naming conflicts. It provides a clear structure for organizing your CSS classes.</p>
+
+<h3 id="what-is-bem">What is BEM?</h3>
+
+<p>BEM stands for:</p>
+<ul>
+  <li><strong>Block</strong>: A standalone component that is meaningful on its own (e.g., <code class="language-plaintext highlighter-rouge">button</code>, <code class="language-plaintext highlighter-rouge">card</code>, <code class="language-plaintext highlighter-rouge">menu</code>)</li>
+  <li><strong>Element</strong>: A part of a block that has no standalone meaning (e.g., <code class="language-plaintext highlighter-rouge">button__icon</code>, <code class="language-plaintext highlighter-rouge">card__title</code>)</li>
+  <li><strong>Modifier</strong>: A flag on a block or element that changes its appearance or behavior (e.g., <code class="language-plaintext highlighter-rouge">button--primary</code>, <code class="language-plaintext highlighter-rouge">card--featured</code>)</li>
+</ul>
+
+<h3 id="naming-convention">Naming Convention</h3>
+
+<p>BEM uses a specific naming pattern:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>block__element--modifier
+</code></pre></div></div>
+
+<ul>
+  <li><strong>Block</strong>: Single word, lowercase (e.g., <code class="language-plaintext highlighter-rouge">button</code>, <code class="language-plaintext highlighter-rouge">card</code>)</li>
+  <li><strong>Element</strong>: Separated by double underscore <code class="language-plaintext highlighter-rouge">__</code> (e.g., <code class="language-plaintext highlighter-rouge">button__icon</code>)</li>
+  <li><strong>Modifier</strong>: Separated by double hyphen <code class="language-plaintext highlighter-rouge">--</code> (e.g., <code class="language-plaintext highlighter-rouge">button--primary</code>)</li>
+</ul>
+
+<h3 id="examples">Examples</h3>
+
+<h4 id="basic-block">Basic Block</h4>
+<div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;div class="card"&gt;
+  &lt;h2 class="card__title"&gt;card.title&lt;/h2&gt;
+  &lt;p class="card__content"&gt;card.content&lt;/p&gt;
+  &lt;button class="card__button"&gt;card.action&lt;/button&gt;
+&lt;/div&gt;
+</code></pre></div></div>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.card</span> <span class="p">{</span> <span class="p">}</span>
+<span class="nc">.card__title</span> <span class="p">{</span> <span class="p">}</span>
+<span class="nc">.card__content</span> <span class="p">{</span> <span class="p">}</span>
+<span class="nc">.card__button</span> <span class="p">{</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="block-with-modifiers">Block with Modifiers</h4>
+<div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;button class="button button--primary"&gt;button.primary&lt;/button&gt;
+&lt;button class="button button--secondary"&gt;button.secondary&lt;/button&gt;
+&lt;button class="button button--large"&gt;button.large&lt;/button&gt;
+</code></pre></div></div>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.button</span> <span class="p">{</span> <span class="p">}</span>
+<span class="nc">.button--primary</span> <span class="p">{</span> <span class="p">}</span>
+<span class="nc">.button--secondary</span> <span class="p">{</span> <span class="p">}</span>
+<span class="nc">.button--large</span> <span class="p">{</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="element-with-modifiers">Element with Modifiers</h4>
+<div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;div class="card card--featured"&gt;
+  &lt;h2 class="card__title card__title--highlighted"&gt;card.featured_title&lt;/h2&gt;
+  &lt;p class="card__content"&gt;card.content&lt;/p&gt;
+&lt;/div&gt;
+</code></pre></div></div>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.card</span> <span class="p">{</span> <span class="p">}</span>
+<span class="nc">.card--featured</span> <span class="p">{</span> <span class="p">}</span>
+<span class="nc">.card__title</span> <span class="p">{</span> <span class="p">}</span>
+<span class="nc">.card__title--highlighted</span> <span class="p">{</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="best-practices">Best Practices</h3>
+
+<ol>
+  <li><strong>Keep blocks independent</strong>
+    <ul>
+      <li>Blocks should be reusable and not depend on parent elements</li>
+      <li>Avoid nesting blocks inside blocks (use composition instead)</li>
+    </ul>
+  </li>
+  <li><strong>Use modifiers, not separate classes</strong>
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   
+&lt;button class="button primary-button"&gt;button.click&lt;/button&gt;
+
+   
+&lt;button class="button button--primary"&gt;button.click&lt;/button&gt;
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Don’t create elements of elements</strong>
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   
+&lt;div class="card"&gt;
+  &lt;div class="card__header"&gt;
+    &lt;h2 class="card__header__title"&gt;card.title&lt;/h2&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+   
+&lt;div class="card"&gt;
+  &lt;div class="card__header"&gt;
+    &lt;h2 class="card__title"&gt;card.title&lt;/h2&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Use semantic HTML</strong>
+    <ul>
+      <li>BEM is for CSS organization, not HTML structure</li>
+      <li>Always use appropriate HTML elements</li>
+    </ul>
+  </li>
+  <li><strong>Keep class names short but descriptive</strong>
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   
+&lt;div class="user-profile-card-container"&gt;
+
+   
+&lt;div class="profile-card"&gt;
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Modifiers should be optional</strong>
+    <ul>
+      <li>Blocks and elements should work without modifiers</li>
+      <li>Modifiers enhance or change appearance/behavior</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="common-patterns">Common Patterns</h3>
+
+<h4 id="navigation-menu">Navigation Menu</h4>
+<div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;nav class="nav"&gt;
+  &lt;ul class="nav__list"&gt;
+    
+  &lt;/ul&gt;
+&lt;/nav&gt;
+</code></pre></div></div>
+
+<h4 id="form-elements">Form Elements</h4>
+<div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;form class="form" action="" method="post"&gt;
+  &lt;div class="form__group"&gt;
+    &lt;label class="form__label" for="email"&gt;form.email&lt;/label&gt;
+    &lt;input
+      class="form__input "
+      type="email"
+      id="email"
+      name="contact[email]"
+      value=""
+    &gt;
+    
+  &lt;/div&gt;
+  &lt;button
+    class="form__submit "
+    type="submit"
+    
+  &gt;
+    form.submit
+  &lt;/button&gt;
+&lt;/form&gt;
+</code></pre></div></div>
+
+<h3 id="when-to-use-bem">When to Use BEM</h3>
+
+<p>✅ <strong>Use BEM when:</strong></p>
+<ul>
+  <li>Building component-based interfaces</li>
+  <li>Working on large projects with multiple developers</li>
+  <li>You need clear, maintainable CSS</li>
+  <li>You want to avoid CSS conflicts</li>
+</ul>
+
+<p>❌ <strong>Consider alternatives when:</strong></p>
+<ul>
+  <li>Working on very small projects</li>
+  <li>Using CSS-in-JS solutions</li>
+  <li>Using utility-first frameworks (Tailwind, etc.)</li>
+</ul>
+
+<h3 id="tips">Tips</h3>
+
+<ul>
+  <li><strong>Be consistent</strong>: Stick to the naming convention throughout the project</li>
+  <li><strong>Document your blocks</strong>: Keep a style guide or component library</li>
+  <li><strong>Don’t over-nest</strong>: Keep your BEM structure flat (max 1 level of elements)</li>
+  <li><strong>Use mixins/utilities</strong>: Combine BEM with utility classes for spacing, typography, etc.</li>
+</ul>
+
+<h3 id="resources">Resources</h3>
+
+<ul>
+  <li><a href="https://en.bem.info/" target="_blank" rel="noopener noreferrer">Official BEM Website</a></li>
+  <li><a href="https://css-tricks.com/bem-101/" target="_blank" rel="noopener noreferrer">BEM 101</a></li>
+  <li><a href="https://9elements.com/bem-cheat-sheet/" target="_blank" rel="noopener noreferrer">BEM Cheat Sheet</a></li>
+</ul>
+
       
       <a href="/developers.html">Back</a>
       
