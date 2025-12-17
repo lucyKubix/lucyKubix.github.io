@@ -57,8 +57,8 @@ h6 {
     left: 10px;
     height: auto;
     width: auto;
-    background: invert($body-link-color);
-    outline: thick solid invert($body-link-color);
+    background: color.invert($body-link-color);
+    outline: thick solid color.invert($body-link-color);
   }
 }
 
