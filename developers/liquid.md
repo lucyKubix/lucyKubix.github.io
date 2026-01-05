@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Liquid
-description: Shopify Liquid best practices
+description: Not Water
 parent: /developers.html
 ---
 

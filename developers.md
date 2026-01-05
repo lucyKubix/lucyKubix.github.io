@@ -16,7 +16,7 @@ This is your hub where you'll find helpful information. It includes things like 
 ### Best Practices {#best-practices}
 * [BEM](/developers/bem.html)
 * [Custom Elements](/developers/custom-elements.html)
-* [Liquid ***TODO***](/developers/liquid.html)
+* [Liquid](/developers/liquid.html)
 
 ### How to {#how-to}
 * [Branch](/developers/branch.html)
