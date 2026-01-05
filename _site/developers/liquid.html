@@ -8,8 +8,8 @@
 <meta name="generator" content="Jekyll v4.4.1" />
 <meta property="og:title" content="Liquid" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Not water" />
-<meta property="og:description" content="Not water" />
+<meta name="description" content="Shopify Liquid best practices" />
+<meta property="og:description" content="Shopify Liquid best practices" />
 <link rel="canonical" href="http://localhost:4000/developers/liquid.html" />
 <meta property="og:url" content="http://localhost:4000/developers/liquid.html" />
 <meta property="og:site_name" content="Kubix Developer Documentation" />
@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Liquid" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"Not water","headline":"Liquid","url":"http://localhost:4000/developers/liquid.html"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"Shopify Liquid best practices","headline":"Liquid","url":"http://localhost:4000/developers/liquid.html"}</script>
 <!-- End Jekyll SEO tag -->
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -44,7 +44,7 @@
 
     <header class="page-header" role="banner">
       <h1 class="project-name">Liquid</h1>
-      <h2 class="project-tagline">Not water</h2>
+      <h2 class="project-tagline">Shopify Liquid best practices</h2>
     </header>
 
     <main id="content" class="main-content" role="main">
@@ -60,6 +60,598 @@
   
 </nav>
       <h2 id="liquid">Liquid</h2>
+
+<p>Liquid is an open-source templating language created by Shopify. It’s the backbone of Shopify themes and is used to load dynamic content on storefronts. This guide covers best practices for writing maintainable, performant, and secure Liquid code in Shopify themes.</p>
+
+<h3 id="what-is-liquid">What is Liquid?</h3>
+
+<p>Liquid uses a combination of:</p>
+<ul>
+  <li><strong>Objects</strong>: Variables that have attributes (e.g., <code class="language-plaintext highlighter-rouge">product.title</code>, <code class="language-plaintext highlighter-rouge">collection.handle</code>)</li>
+  <li><strong>Tags</strong>: Logic that controls flow (e.g., <code>{% if %}</code>, <code>{% for %}</code>, <code>{% render %}</code>)</li>
+  <li><strong>Filters</strong>: Methods that modify output (e.g., <code>{{ price | money }}</code>, <code>{{ title | upcase }}</code>)</li>
+</ul>
+
+<p>Liquid code is processed server-side before the HTML is sent to the browser.</p>
+
+<h3 id="basic-syntax">Basic Syntax</h3>
+
+<h4 id="objects-and-output">Objects and Output</h4>
+
+<div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>
+<span class="cp">{{</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">description</span><span class="w"> </span><span class="cp">}}</span>
+<span class="cp">{{</span><span class="w"> </span><span class="nv">cart</span><span class="p">.</span><span class="nv">item_count</span><span class="w"> </span><span class="cp">}}</span>
+</code></pre></div></div>
+
+<h4 id="tags">Tags</h4>
+
+<div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">available</span><span class="w"> </span><span class="cp">%}</span>
+  &lt;p&gt;In stock&lt;/p&gt;
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nv">product</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">products</span><span class="w"> </span><span class="cp">%}</span>
+  &lt;div&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>&lt;/div&gt;
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endfor</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div></div>
+
+<h4 id="filters">Filters</h4>
+
+<div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">upcase</span><span class="w"> </span><span class="cp">}}</span>
+<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">price</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">money</span><span class="w"> </span><span class="cp">}}</span>
+<span class="cp">{{</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">handle</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">handleize</span><span class="w"> </span><span class="cp">}}</span>
+</code></pre></div></div>
+
+<h3 id="performance-best-practices">Performance Best Practices</h3>
+
+<ol>
+  <li>
+    <p><strong>Limit loops and nested loops</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ❌ Bad - Nested loops can be slow </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nv">collection</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nv">collections</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nv">product</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">products</span><span class="w"> </span><span class="cp">%}</span>
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nv">variant</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">variants</span><span class="w"> </span><span class="cp">%}</span>
+      <span class="cp">{{</span><span class="w"> </span><span class="nv">variant</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">endfor</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">endfor</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endfor</span><span class="w"> </span><span class="cp">%}</span>
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Good - Use limit and break when possible </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nv">collection</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nv">collections</span><span class="w"> </span><span class="na">limit</span><span class="o">:</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nv">product</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">products</span><span class="w"> </span><span class="na">limit</span><span class="o">:</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="cp">%}</span>
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">variants</span><span class="p">.</span><span class="nf">size</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="cp">%}</span>
+      <span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">variants</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">endfor</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endfor</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Use <code class="language-plaintext highlighter-rouge">forloop.first</code> and <code class="language-plaintext highlighter-rouge">forloop.last</code> instead of checking indexes</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ❌ Less efficient </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nv">product</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">products</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nb">forloop.index0</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="cp">%}</span>
+    &lt;div class="featured"&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>&lt;/div&gt;
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endfor</span><span class="w"> </span><span class="cp">%}</span>
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Better </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nv">product</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">products</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nb">forloop.first</span><span class="w"> </span><span class="cp">%}</span>
+    &lt;div class="featured"&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>&lt;/div&gt;
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endfor</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Avoid unnecessary filters</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ❌ Chaining unnecessary filters </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">strip</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">strip_html</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">escape</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">upcase</span><span class="w"> </span><span class="cp">}}</span>
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Only use what you need </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">escape</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">upcase</span><span class="w"> </span><span class="cp">}}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Use <code class="language-plaintext highlighter-rouge">assign</code> to avoid repeated lookups</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ❌ Bad - Multiple lookups </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+&lt;h1&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>&lt;/h1&gt;
+&lt;p&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span> is available!&lt;/p&gt;
+&lt;span class="badge"&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>&lt;/span&gt;
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Good - Cache the value </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">assign</span><span class="w"> </span><span class="nv">product_title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">%}</span>
+&lt;h1&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product_title</span><span class="w"> </span><span class="cp">}}</span>&lt;/h1&gt;
+&lt;p&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product_title</span><span class="w"> </span><span class="cp">}}</span> is available!&lt;/p&gt;
+&lt;span class="badge"&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product_title</span><span class="w"> </span><span class="cp">}}</span>&lt;/span&gt;
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Prefer <code class="language-plaintext highlighter-rouge">render</code> over <code class="language-plaintext highlighter-rouge">include</code> (deprecated)</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ❌ Deprecated </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">include</span><span class="w"> </span><span class="s1">'product-card'</span><span class="w"> </span><span class="cp">%}</span>
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Recommended </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">render</span><span class="w"> </span><span class="s1">'product-card'</span><span class="p">,</span><span class="w"> </span><span class="na">product</span><span class="o">:</span><span class="w"> </span><span class="nv">product</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="maintainability-best-practices">Maintainability Best Practices</h3>
+
+<ol>
+  <li>
+    <p><strong>Use meaningful variable names</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ❌ Bad </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">assign</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">price</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">assign</span><span class="w"> </span><span class="nv">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">compare_at_price</span><span class="w"> </span><span class="cp">%}</span>
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Good </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">assign</span><span class="w"> </span><span class="nv">current_price</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">price</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">assign</span><span class="w"> </span><span class="nv">original_price</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">compare_at_price</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Add comments for complex logic</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> Calculate discount percentage </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">compare_at_price</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">price</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">assign</span><span class="w"> </span><span class="nv">discount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">compare_at_price</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">minus</span><span class="p">:</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">price</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">assign</span><span class="w"> </span><span class="nv">discount_percentage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">discount</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">times</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">divided_by</span><span class="p">:</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">compare_at_price</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Break complex templates into snippets</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Good - Reusable and maintainable </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">render</span><span class="w"> </span><span class="s1">'product-card'</span><span class="p">,</span><span class="w"> </span><span class="na">product</span><span class="o">:</span><span class="w"> </span><span class="nv">product</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">render</span><span class="w"> </span><span class="s1">'product-card'</span><span class="p">,</span><span class="w"> </span><span class="na">product</span><span class="o">:</span><span class="w"> </span><span class="nv">related_product</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Use consistent formatting</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Good - Consistent indentation </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">available</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nv">variant</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">variants</span><span class="w"> </span><span class="cp">%}</span>
+    &lt;option value="<span class="cp">{{</span><span class="w"> </span><span class="nv">variant</span><span class="p">.</span><span class="nv">id</span><span class="w"> </span><span class="cp">}}</span>"&gt;
+      <span class="cp">{{</span><span class="w"> </span><span class="nv">variant</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>
+    &lt;/option&gt;
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">endfor</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Use <code class="language-plaintext highlighter-rouge">liquid</code> tag for code blocks</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Good - Prevents conflicts with HTML </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">liquid</span><span class="w">
+  </span><span class="nt">assign</span><span class="w"> </span><span class="nv">price</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">price</span><span class="w">
+  </span><span class="nt">assign</span><span class="w"> </span><span class="nv">compare_price</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">compare_at_price</span><span class="w">
+  </span><span class="nt">if</span><span class="w"> </span><span class="nv">compare_price</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nv">price</span><span class="w">
+    </span><span class="nt">assign</span><span class="w"> </span><span class="nv">on_sale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">
+  </span><span class="nt">endif</span><span class="w">
+</span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="shopify-specific-best-practices">Shopify-Specific Best Practices</h3>
+
+<ol>
+  <li>
+    <p><strong>Use translation filters for all user-facing text</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ❌ Hard-coded text </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+&lt;button&gt;Add to Cart&lt;/button&gt;
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Translatable </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+&lt;button&gt;<span class="cp">{{</span><span class="w"> </span><span class="s1">'products.product.add_to_cart'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">t</span><span class="w"> </span><span class="cp">}}</span>&lt;/button&gt;
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Use theme routes for navigation</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ❌ Hard-coded URLs </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+&lt;a href="/cart"&gt;Cart&lt;/a&gt;
+&lt;a href="/account"&gt;Account&lt;/a&gt;
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Theme-aware routes </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+&lt;a href="<span class="cp">{{</span><span class="w"> </span><span class="nv">routes</span><span class="p">.</span><span class="nv">cart_url</span><span class="w"> </span><span class="cp">}}</span>"&gt;<span class="cp">{{</span><span class="w"> </span><span class="s1">'cart.general.title'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">t</span><span class="w"> </span><span class="cp">}}</span>&lt;/a&gt;
+&lt;a href="<span class="cp">{{</span><span class="w"> </span><span class="nv">routes</span><span class="p">.</span><span class="nv">account_url</span><span class="w"> </span><span class="cp">}}</span>"&gt;<span class="cp">{{</span><span class="w"> </span><span class="s1">'customer.account.title'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">t</span><span class="w"> </span><span class="cp">}}</span>&lt;/a&gt;
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Check for object existence before accessing</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ❌ May cause errors </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{{</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">products</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Safe </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">products</span><span class="p">.</span><span class="nf">size</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{{</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">products</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Use section settings for customizable content</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Good - Configurable via theme editor </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">section</span><span class="p">.</span><span class="nv">settings</span><span class="p">.</span><span class="nv">show_title</span><span class="w"> </span><span class="cp">%}</span>
+  &lt;h1&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">section</span><span class="p">.</span><span class="nv">settings</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">default</span><span class="p">:</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>&lt;/h1&gt;
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Handle empty states gracefully</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">products</span><span class="p">.</span><span class="nf">size</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nv">product</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">products</span><span class="w"> </span><span class="cp">%}</span>
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">render</span><span class="w"> </span><span class="s1">'product-card'</span><span class="p">,</span><span class="w"> </span><span class="na">product</span><span class="o">:</span><span class="w"> </span><span class="nv">product</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">endfor</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">else</span><span class="w"> </span><span class="cp">%}</span>
+  &lt;p&gt;<span class="cp">{{</span><span class="w"> </span><span class="s1">'collections.general.no_matches'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">t</span><span class="w"> </span><span class="cp">}}</span>&lt;/p&gt;
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Use schema for section settings</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">schema</span><span class="w"> </span><span class="cp">%}</span>
+{
+  "name": "Featured Collection",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "product_count",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 4,
+      "label": "Products to show"
+    }
+  ]
+}
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endschema</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="common-patterns">Common Patterns</h3>
+
+<h4 id="product-card-component">Product Card Component</h4>
+
+<div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> snippets/product-card.liquid </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+&lt;div class="product-card"&gt;
+  &lt;a href="<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">url</span><span class="w"> </span><span class="cp">}}</span>" class="product-card__link"&gt;
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">featured_image</span><span class="w"> </span><span class="cp">%}</span>
+      &lt;img
+        src="<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">featured_image</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">image_url</span><span class="p">:</span><span class="w"> </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">300</span><span class="w"> </span><span class="cp">}}</span>"
+        alt="<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">featured_image</span><span class="p">.</span><span class="nv">alt</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">escape</span><span class="w"> </span><span class="cp">}}</span>"
+        loading="lazy"
+        width="300"
+        height="<span class="cp">{{</span><span class="w"> </span><span class="mi">300</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">divided_by</span><span class="p">:</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">featured_image</span><span class="p">.</span><span class="nv">aspect_ratio</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">round</span><span class="w"> </span><span class="cp">}}</span>"
+      &gt;
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+    &lt;h3 class="product-card__title"&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>&lt;/h3&gt;
+    &lt;div class="product-card__price"&gt;
+      <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">compare_at_price</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">price</span><span class="w"> </span><span class="cp">%}</span>
+        &lt;span class="price price--sale"&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">price</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">money</span><span class="w"> </span><span class="cp">}}</span>&lt;/span&gt;
+        &lt;span class="price price--compare"&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">compare_at_price</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">money</span><span class="w"> </span><span class="cp">}}</span>&lt;/span&gt;
+      <span class="cp">{%</span><span class="w"> </span><span class="nt">else</span><span class="w"> </span><span class="cp">%}</span>
+        &lt;span class="price"&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">price</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">money</span><span class="w"> </span><span class="cp">}}</span>&lt;/span&gt;
+      <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+    &lt;/div&gt;
+  &lt;/a&gt;
+&lt;/div&gt;
+</code></pre></div></div>
+
+<h4 id="conditional-rendering">Conditional Rendering</h4>
+
+<div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">liquid</span><span class="w">
+  </span><span class="nt">assign</span><span class="w"> </span><span class="nv">has_sale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w">
+  </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">compare_at_price</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">price</span><span class="w">
+    </span><span class="nt">assign</span><span class="w"> </span><span class="nv">has_sale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="nt">assign</span><span class="w"> </span><span class="nv">discount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">compare_at_price</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">minus</span><span class="p">:</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">price</span><span class="w">
+    </span><span class="nt">assign</span><span class="w"> </span><span class="nv">discount_percentage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">discount</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">times</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">divided_by</span><span class="p">:</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">compare_at_price</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">round</span><span class="w">
+  </span><span class="nt">endif</span><span class="w">
+</span><span class="cp">%}</span>
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">has_sale</span><span class="w"> </span><span class="cp">%}</span>
+  &lt;span class="badge badge--sale"&gt;
+    <span class="cp">{{</span><span class="w"> </span><span class="s1">'products.product.save'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">t</span><span class="w"> </span><span class="cp">}}</span> <span class="cp">{{</span><span class="w"> </span><span class="nv">discount_percentage</span><span class="w"> </span><span class="cp">}}</span>%
+  &lt;/span&gt;
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div></div>
+
+<h4 id="navigation-menu">Navigation Menu</h4>
+
+<div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;nav class="nav" role="navigation" aria-label="<span class="cp">{{</span><span class="w"> </span><span class="s1">'general.accessibility.nav'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">t</span><span class="w"> </span><span class="cp">}}</span>"&gt;
+  &lt;ul class="nav__list"&gt;
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nv">link</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nv">linklists</span><span class="p">.</span><span class="nv">main-menu</span><span class="p">.</span><span class="nv">links</span><span class="w"> </span><span class="cp">%}</span>
+      &lt;li class="nav__item"&gt;
+        &lt;a
+          href="<span class="cp">{{</span><span class="w"> </span><span class="nv">link</span><span class="p">.</span><span class="nv">url</span><span class="w"> </span><span class="cp">}}</span>"
+          class="nav__link <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">link</span><span class="p">.</span><span class="nv">active</span><span class="w"> </span><span class="cp">%}</span>nav__link--active<span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>"
+        &gt;
+          <span class="cp">{{</span><span class="w"> </span><span class="nv">link</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>
+        &lt;/a&gt;
+        <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">link</span><span class="p">.</span><span class="nv">links</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">blank</span><span class="w"> </span><span class="cp">%}</span>
+          &lt;ul class="nav__sublist"&gt;
+            <span class="cp">{%</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nv">childlink</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nv">link</span><span class="p">.</span><span class="nv">links</span><span class="w"> </span><span class="cp">%}</span>
+              &lt;li class="nav__subitem"&gt;
+                &lt;a href="<span class="cp">{{</span><span class="w"> </span><span class="nv">childlink</span><span class="p">.</span><span class="nv">url</span><span class="w"> </span><span class="cp">}}</span>" class="nav__sublink"&gt;
+                  <span class="cp">{{</span><span class="w"> </span><span class="nv">childlink</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>
+                &lt;/a&gt;
+              &lt;/li&gt;
+            <span class="cp">{%</span><span class="w"> </span><span class="nt">endfor</span><span class="w"> </span><span class="cp">%}</span>
+          &lt;/ul&gt;
+        <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+      &lt;/li&gt;
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">endfor</span><span class="w"> </span><span class="cp">%}</span>
+  &lt;/ul&gt;
+&lt;/nav&gt;
+</code></pre></div></div>
+
+<h4 id="form-handling">Form Handling</h4>
+
+<div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">form</span><span class="w"> </span><span class="s1">'contact'</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">form</span><span class="p">.</span>posted_successfully?<span class="w"> </span><span class="cp">%}</span>
+    &lt;p class="form-message form-message--success"&gt;
+      <span class="cp">{{</span><span class="w"> </span><span class="s1">'contact.form.post_success'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">t</span><span class="w"> </span><span class="cp">}}</span>
+    &lt;/p&gt;
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">form</span><span class="p">.</span><span class="nv">errors</span><span class="w"> </span><span class="cp">%}</span>
+    &lt;div class="form-message form-message--error"&gt;
+      <span class="cp">{{</span><span class="w"> </span><span class="nv">form</span><span class="p">.</span><span class="nv">errors</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">default_errors</span><span class="w"> </span><span class="cp">}}</span>
+    &lt;/div&gt;
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+
+  &lt;div class="form-group"&gt;
+    &lt;label for="ContactFormName"&gt;<span class="cp">{{</span><span class="w"> </span><span class="s1">'contact.form.name'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">t</span><span class="w"> </span><span class="cp">}}</span>&lt;/label&gt;
+    &lt;input
+      type="text"
+      id="ContactFormName"
+      name="contact[name]"
+      value="<span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">form</span><span class="p">.</span><span class="nv">name</span><span class="w"> </span><span class="cp">%}{{</span><span class="w"> </span><span class="nv">form</span><span class="p">.</span><span class="nv">name</span><span class="w"> </span><span class="cp">}}{%</span><span class="w"> </span><span class="nt">elsif</span><span class="w"> </span><span class="nv">customer</span><span class="w"> </span><span class="cp">%}{{</span><span class="w"> </span><span class="nv">customer</span><span class="p">.</span><span class="nv">name</span><span class="w"> </span><span class="cp">}}{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>"
+      required
+    &gt;
+  &lt;/div&gt;
+
+  &lt;button type="submit"&gt;<span class="cp">{{</span><span class="w"> </span><span class="s1">'contact.form.submit'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">t</span><span class="w"> </span><span class="cp">}}</span>&lt;/button&gt;
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endform</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div></div>
+
+<h3 id="anti-patterns-to-avoid">Anti-Patterns to Avoid</h3>
+
+<ol>
+  <li>
+    <p><strong>Don’t use <code class="language-plaintext highlighter-rouge">include</code> (deprecated)</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ❌ Deprecated </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">include</span><span class="w"> </span><span class="s1">'snippet-name'</span><span class="w"> </span><span class="cp">%}</span>
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Use render instead </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">render</span><span class="w"> </span><span class="s1">'snippet-name'</span><span class="p">,</span><span class="w"> </span><span class="na">param</span><span class="o">:</span><span class="w"> </span><span class="nv">value</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Don’t nest too deeply</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ❌ Too many nested conditions </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">available</span><span class="w"> </span><span class="cp">%}</span>
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">variants</span><span class="p">.</span><span class="nf">size</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="cp">%}</span>
+      <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">variants</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nv">inventory_quantity</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="cp">%}</span>
+        <span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>
+      <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Combine conditions </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">available</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">variants</span><span class="p">.</span><span class="nf">size</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">variants</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nv">inventory_quantity</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Don’t use <code class="language-plaintext highlighter-rouge">capture</code> for simple assignments</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ❌ Overkill for simple values </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">capture</span><span class="w"> </span><span class="nv">title</span><span class="w"> </span><span class="cp">%}{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}{%</span><span class="w"> </span><span class="nt">endcapture</span><span class="w"> </span><span class="cp">%}</span>
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Use assign </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">assign</span><span class="w"> </span><span class="nv">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Don’t forget to escape user input</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ❌ Potential XSS </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+&lt;div&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">description</span><span class="w"> </span><span class="cp">}}</span>&lt;/div&gt;
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Safe </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+&lt;div&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">description</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">escape</span><span class="w"> </span><span class="cp">}}</span>&lt;/div&gt;
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Don’t access nested properties without checking</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ❌ May cause errors </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">variants</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nv">option1</span><span class="w"> </span><span class="cp">}}</span>
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Safe </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">variants</span><span class="p">.</span><span class="nf">size</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">variants</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nv">option1</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">variants</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nv">option1</span><span class="w"> </span><span class="cp">}}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="security-best-practices">Security Best Practices</h3>
+
+<ol>
+  <li>
+    <p><strong>Always escape user-generated content</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Safe </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{{</span><span class="w"> </span><span class="nv">customer</span><span class="p">.</span><span class="nv">name</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">escape</span><span class="w"> </span><span class="cp">}}</span>
+<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">description</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">escape</span><span class="w"> </span><span class="cp">}}</span>
+<span class="cp">{{</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">escape</span><span class="w"> </span><span class="cp">}}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Use <code class="language-plaintext highlighter-rouge">json</code> filter for JavaScript variables</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Safe JSON encoding </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+&lt;script&gt;
+  var product = <span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">json</span><span class="w"> </span><span class="cp">}}</span>;
+&lt;/script&gt;
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Sanitize URLs</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> ✅ Safe </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+&lt;a href="<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">url</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">escape</span><span class="w"> </span><span class="cp">}}</span>"&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>&lt;/a&gt;
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="advanced-techniques">Advanced Techniques</h3>
+
+<ol>
+  <li>
+    <p><strong>Using <code class="language-plaintext highlighter-rouge">liquid</code> tag for cleaner code</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">liquid</span><span class="w">
+  </span><span class="nt">assign</span><span class="w"> </span><span class="nv">on_sale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w">
+  </span><span class="nt">assign</span><span class="w"> </span><span class="nv">discount_percentage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w">
+
+  </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">compare_at_price</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">price</span><span class="w">
+    </span><span class="nt">assign</span><span class="w"> </span><span class="nv">on_sale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="nt">assign</span><span class="w"> </span><span class="nv">discount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">compare_at_price</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">minus</span><span class="p">:</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">price</span><span class="w">
+    </span><span class="nt">assign</span><span class="w"> </span><span class="nv">discount_percentage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">discount</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">times</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">divided_by</span><span class="p">:</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">compare_at_price</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">round</span><span class="w">
+  </span><span class="nt">endif</span><span class="w">
+</span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Custom filters with <code class="language-plaintext highlighter-rouge">case</code> statement</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">case</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">type</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">when</span><span class="w"> </span><span class="s1">'Clothing'</span><span class="w"> </span><span class="cp">%}</span>
+    &lt;span class="badge badge--clothing"&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">type</span><span class="w"> </span><span class="cp">}}</span>&lt;/span&gt;
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">when</span><span class="w"> </span><span class="s1">'Accessories'</span><span class="w"> </span><span class="cp">%}</span>
+    &lt;span class="badge badge--accessories"&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">type</span><span class="w"> </span><span class="cp">}}</span>&lt;/span&gt;
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">else</span><span class="w"> </span><span class="cp">%}</span>
+    &lt;span class="badge"&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">type</span><span class="w"> </span><span class="cp">}}</span>&lt;/span&gt;
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endcase</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Using <code class="language-plaintext highlighter-rouge">break</code> and <code class="language-plaintext highlighter-rouge">continue</code> in loops</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nv">product</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nv">collection</span><span class="p">.</span><span class="nv">products</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">available</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="cp">%}</span>
+    <span class="cp">{%</span><span class="w"> </span><span class="kr">continue</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nb">forloop.index</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="cp">%}</span>
+    <span class="cp">{%</span><span class="w"> </span><span class="kr">break</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">render</span><span class="w"> </span><span class="s1">'product-card'</span><span class="p">,</span><span class="w"> </span><span class="na">product</span><span class="o">:</span><span class="w"> </span><span class="nv">product</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endfor</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="debugging-tips">Debugging Tips</h3>
+
+<ol>
+  <li>
+    <p><strong>Use <code class="language-plaintext highlighter-rouge">comment</code> tags to temporarily disable code</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c">
+  {% render 'old-component' %}
+</span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">render</span><span class="w"> </span><span class="s1">'new-component'</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Output variables for debugging</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">comment</span><span class="w"> </span><span class="cp">%}</span><span class="c"> Debug output </span><span class="cp">{%</span><span class="w"> </span><span class="nt">endcomment</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">json</span><span class="w"> </span><span class="cp">}}</span>
+<span class="cp">{{</span><span class="w"> </span><span class="nv">collection</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">json</span><span class="w"> </span><span class="cp">}}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Check object properties</strong></p>
+
+    <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="w"> </span><span class="cp">%}</span>
+  &lt;p&gt;Product exists&lt;/p&gt;
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">%}</span>
+    &lt;p&gt;Product has title: <span class="cp">{{</span><span class="w"> </span><span class="nv">product</span><span class="p">.</span><span class="nv">title</span><span class="w"> </span><span class="cp">}}</span>&lt;/p&gt;
+  <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="when-to-use-liquid-vs-javascript">When to Use Liquid vs. JavaScript</h3>
+
+<p>✅ <strong>Use Liquid for:</strong></p>
+<ul>
+  <li>Server-side rendering</li>
+  <li>Initial page load content</li>
+  <li>Theme customization settings</li>
+  <li>Static or mostly static content</li>
+  <li>SEO-critical content</li>
+</ul>
+
+<p>❌ <strong>Consider JavaScript/Custom Elements for:</strong></p>
+<ul>
+  <li>Interactive components (cart drawers, modals)</li>
+  <li>Dynamic content updates without page reload</li>
+  <li>Client-side filtering/sorting</li>
+  <li>Real-time features</li>
+  <li>Complex user interactions</li>
+</ul>
+
+<h3 id="tips">Tips</h3>
+
+<ul>
+  <li><strong>Test with different data</strong>: Test your templates with products that have missing images, empty descriptions, etc.</li>
+  <li><strong>Use theme editor</strong>: Make your sections configurable through the theme customizer</li>
+  <li><strong>Keep snippets small</strong>: Break large templates into reusable snippets</li>
+  <li><strong>Document complex logic</strong>: Add comments explaining why you’re doing something, not just what</li>
+  <li><strong>Follow Shopify conventions</strong>: Use Shopify’s recommended structure for sections, snippets, and templates</li>
+  <li><strong>Validate schema</strong>: Always include proper schema definitions for sections</li>
+  <li><strong>Handle edge cases</strong>: Always consider what happens when data is missing or null</li>
+</ul>
+
+<h3 id="resources">Resources</h3>
+
+<ul>
+  <li><a href="https://shopify.dev/docs/api/liquid" target="_blank" rel="noopener noreferrer">Shopify Liquid Documentation</a></li>
+  <li><a href="https://shopify.dev/docs/themes/liquid/reference" target="_blank" rel="noopener noreferrer">Liquid Reference</a></li>
+  <li><a href="https://shopify.dev/docs/themes/architecture" target="_blank" rel="noopener noreferrer">Shopify Theme Architecture</a></li>
+  <li><a href="https://shopify.dev/docs/themes/theme-development" target="_blank" rel="noopener noreferrer">Theme Development Guide</a></li>
+  <li><a href="https://github.com/Shopify/liquid" target="_blank" rel="noopener noreferrer">Liquid on GitHub</a></li>
+</ul>
 
       
       <a href="/developers.html">Back</a>
