@@ -395,3 +395,12 @@ a {
 .site-footer-credits {
   color: $blockquote-text-color;
 }
+
+.main-content {
+  ul li h4 + p, [id^="repo"], ul li h3 + p {
+    margin-top: 0;
+  }
+  ul li h4:has(+ p), h2:has(+ [id^="repo"]), ul li h3:has(+ p) {
+    margin-bottom: 0;
+  }
+}

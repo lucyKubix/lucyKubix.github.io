@@ -1028,6 +1028,13 @@ a:hover {
   color: #819198;
 }
 
+.main-content ul li h4 + p, .main-content ul li .h4 + p, .main-content [id^=repo], .main-content ul li h3 + p, .main-content ul li .h3 + p {
+  margin-top: 0;
+}
+.main-content ul li h4:has(+ p), .main-content ul li .h4:has(+ p), .main-content h2:has(+ [id^=repo]), .main-content .h2:has(+ [id^=repo]), .main-content ul li h3:has(+ p), .main-content ul li .h3:has(+ p) {
+  margin-bottom: 0;
+}
+
 .flex {
   display: flex;
   gap: 1rem;
