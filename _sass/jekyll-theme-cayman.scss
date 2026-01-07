@@ -141,7 +141,14 @@ a {
   margin-bottom: 0.1rem;
   font-family: "Domine", serif;
   color: $header-bg-color;
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  svg {
+    width: 3rem;
+    height: 3rem;
+  }
   @include large {
     font-size: 3.25rem;
   }
@@ -161,6 +168,14 @@ a {
   opacity: 0.7;
   font-family: "Domine", serif;
   color: $header-bg-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  svg {
+    width: 2rem;
+    height: 2rem;
+  }
   @include large {
     font-size: 1.25rem;
   }
