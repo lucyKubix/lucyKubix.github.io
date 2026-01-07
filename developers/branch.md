@@ -18,9 +18,10 @@ Keep branch summaries short and functional — focus on the action (e.g., header
 
 Never branch from another developer’s feature branch unless explicitly instructed.
 
-Step by step screenshots:
-![Step 1 screenshot of how to create a branch in clickup](/assets/images/github-1.png)
+Step by step demo:
+![How to create branches on clickup](/assets/images/github.gif)
+<!-- ![Step 1 screenshot of how to create a branch in clickup](/assets/images/github-1.png)
 ![Step 2 screenshot of naming the branch](/assets/images/github-2.png)
 ![Step 3 screenshot of choosing which branch to branch from](/assets/images/github-3.png)
-![Step 4 screenshot showing the branch is now connected to the ticket](/assets/images/github-4.png)
+![Step 4 screenshot showing the branch is now connected to the ticket](/assets/images/github-4.png) -->
 
